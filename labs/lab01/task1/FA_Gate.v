@@ -13,6 +13,7 @@ module FA_Gate(
   output cout,
   input  cin,
   output sum
+  
 
   
   
