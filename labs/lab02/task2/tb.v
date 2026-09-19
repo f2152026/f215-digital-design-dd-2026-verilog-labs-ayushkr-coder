@@ -1,11 +1,23 @@
 // tb.v
-// Starter testbench template -- YOU complete this file.
+// Testbench for parameterized lookup table (lut)
 
 module tb;
 
-  // TODO: declare the inputs and outputs
+  parameter WIDTH = 8;
+  parameter DEPTH = 8;
 
-  // TODO: instantiate DUT here
+  // sel needs $clog2(DEPTH) bits; with DEPTH=8, that is [2:0]
+  reg  [$clog2(DEPTH)-1:0] t_sel;
+  wire [WIDTH-1:0]         t_dout;
+
+  // Instantiate DUT with parameter override
+  lut #(
+    .WIDTH(WIDTH),
+    .DEPTH(DEPTH)
+  ) DUT (
+    .sel(t_sel),
+    .dout(t_dout)
+  );
 
   // Waveform dump configuration (DO NOT CHANGE)
   string vcd_file;
@@ -16,12 +28,18 @@ module tb;
     end
   end
 
-  initial begin
-    // TODO: apply different input combinations
+  integer idx;
 
+  initial begin
+    // Loop through every valid address in the table
+    for (idx = 0; idx < DEPTH; idx = idx + 1) begin
+      t_sel = idx;
+      #5;
+    end
+    $finish;
   end
 
   initial
-    $monitor($time, " I0=%b I1=%b S=%b | Y=%b", t_i0, t_i1, t_s, t_y); // change as required
+    $monitor($time, " | sel=%0d | dout=%0d (expected %0d)", t_sel, t_dout, t_sel * t_sel);
 
 endmodule
